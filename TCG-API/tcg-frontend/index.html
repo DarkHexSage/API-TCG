@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trading Card Database - Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Roboto', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', sans-serif;
+      font-weight: 400;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      background-image: url('https://www.hdwallpapers.in/download/yu_gi_oh_hd_yu_gi_oh%21_master_duel-HD.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(26, 26, 46, 0.7), rgba(22, 33, 62, 0.75));
+      z-index: 1;
+    }
+
+    .tcg-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tcg-header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 50px 20px;
+      border-bottom: 2px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .tcg-header h1 {
+      font-size: 48px;
+      color: #fbbf24;
+      margin-bottom: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .tcg-header p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    .tcg-search-box {
+      background: rgba(30, 41, 59, 0.25);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(251, 191, 36, 0.1);
+      margin-bottom: 35px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .tcg-search-controls {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+
+    .tcg-search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 14px 18px;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 10px;
+      font-size: 14px;
+      position: relative;
+      background: rgba(51, 65, 85, 0.4);
+      color: #ffffff;
+      font-family: inherit;
+      font-weight: 400;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-search-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .tcg-search-input:focus {
+      outline: none;
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
+      background: rgba(51, 65, 85, 0.5);
+    }
+
+    .tcg-game-select {
+      padding: 14px 18px;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      background: rgba(51, 65, 85, 0.4);
+      color: #ffffff;
+      font-family: inherit;
+      font-weight: 500;
+      min-width: 160px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-game-select:focus {
+      outline: none;
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
+    }
+
+    .tcg-game-select option {
+      background: #1a1a2e;
+      color: #ffffff;
+    }
+
+    .tcg-btn-search {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1a1a2e;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .tcg-btn-search:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(251, 191, 36, 0.3);
+    }
+
+    .tcg-btn-search:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .tcg-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      max-height: 250px;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .tcg-suggestion-item {
+      padding: 12px 18px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(251, 191, 36, 0.1);
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      transition: all 0.2s ease;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-suggestion-item:hover {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+    }
+
+    .tcg-content {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 25px;
+    }
+
+    .tcg-card-main {
+      background: rgba(30, 41, 59, 0.25);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      border-radius: 16px;
+      padding: 45px;
+      box-shadow: 0 8px 32px rgba(251, 191, 36, 0.1);
+      display: flex;
+      gap: 45px;
+      align-items: flex-start;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .tcg-card-image {
+      flex: 0 0 280px;
+    }
+
+    .tcg-card-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(251, 191, 36, 0.2);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .tcg-card-details {
+      flex: 1;
+    }
+
+    .tcg-card-name {
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .tcg-card-badge {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    .tcg-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(251, 191, 36, 0.1);
+      font-size: 14px;
+    }
+
+    .tcg-detail-label {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-detail-value {
+      color: #fbbf24;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-effect {
+      margin-top: 28px;
+      padding: 20px;
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 3px solid #fbbf24;
+      border-radius: 8px;
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+
+    .tcg-effect-title {
+      font-weight: 700;
+      color: #fbbf24;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .tcg-effect-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.6;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-results {
+      background: rgba(30, 41, 59, 0.25);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(251, 191, 36, 0.1);
+      max-height: 600px;
+      overflow-y: auto;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .tcg-results-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin-bottom: 18px;
+      letter-spacing: 0.3px;
+    }
+
+    .tcg-result-item {
+      display: flex;
+      gap: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(251, 191, 36, 0.1);
+    }
+
+    .tcg-result-item:hover {
+      background: rgba(251, 191, 36, 0.1);
+      border-color: rgba(251, 191, 36, 0.3);
+      transform: translateX(4px);
+    }
+
+    .tcg-result-image {
+      width: 50px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+
+    .tcg-result-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tcg-result-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.2px;
+    }
+
+    .tcg-result-meta {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 3px;
+      letter-spacing: 0.1px;
+    }
+
+    .tcg-empty {
+      text-align: center;
+      padding: 80px 40px;
+      color: rgba(251, 191, 36, 0.6);
+    }
+
+    .tcg-empty p {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    /* Scrollbar Styling */
+    .tcg-results::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .tcg-results::-webkit-scrollbar-track {
+      background: rgba(251, 191, 36, 0.05);
+      border-radius: 10px;
+    }
+
+    .tcg-results::-webkit-scrollbar-thumb {
+      background: rgba(251, 191, 36, 0.3);
+      border-radius: 10px;
+    }
+
+    .tcg-results::-webkit-scrollbar-thumb:hover {
+      background: rgba(251, 191, 36, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .tcg-content {
+        grid-template-columns: 1fr;
+      }
+
+      .tcg-card-main {
+        flex-direction: column;
+        padding: 25px;
+        gap: 25px;
+      }
+
+      .tcg-card-image {
+        flex: 0 0 auto;
+        max-width: 200px;
+      }
+
+      .tcg-header h1 {
+        font-size: 32px;
+      }
+
+      .tcg-header p {
+        font-size: 14px;
+      }
+
+      .tcg-search-controls {
+        flex-direction: column;
+      }
+
+      .tcg-search-input, .tcg-game-select {
+        width: 100%;
+        min-width: unset;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tcg-container">
+    <div id="root"></div>
+  </div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function TCGSearch() {
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedGame, setSelectedGame] = useState('');
+      const [games, setGames] = useState([]);
+      const [suggestions, setSuggestions] = useState([]);
+      const [selectedCard, setSelectedCard] = useState(null);
+      const [searchResults, setSearchResults] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [showSuggestions, setShowSuggestions] = useState(false);
+
+      const API_URL = 'http://localhost:8005/api';
+
+      useEffect(() => {
+        fetchGames();
+      }, []);
+
+      const fetchGames = async () => {
+        try {
+          const res = await fetch(`${API_URL}/games`);
+          const data = await res.json();
+          setGames(data.games);
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      const handleSearchChange = async (value) => {
+        setSearchQuery(value);
+        if (value.length < 1) {
+          setSuggestions([]);
+          setShowSuggestions(false);
+          return;
+        }
+
+        try {
+          const url = new URL(`${API_URL}/autocomplete`);
+          url.searchParams.append('q', value);
+          url.searchParams.append('limit', '8');
+          if (selectedGame) url.searchParams.append('game', selectedGame);
+
+          const res = await fetch(url);
+          const data = await res.json();
+          setSuggestions(data.suggestions);
+          setShowSuggestions(true);
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      const handleSearch = async (query = searchQuery) => {
+        if (!query) return;
+        setLoading(true);
+
+        try {
+          const url = new URL(`${API_URL}/search`);
+          url.searchParams.append('q', query);
+          url.searchParams.append('limit', '50');
+          if (selectedGame) url.searchParams.append('game', selectedGame);
+
+          const res = await fetch(url);
+          const data = await res.json();
+          setSearchResults(data.cards);
+          setShowSuggestions(false);
+          if (data.cards.length > 0) setSelectedCard(data.cards[0]);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const gameColors = {
+        one_piece: '#FF6B6B',
+        pokemon: '#FFD700',
+        yugioh: '#4169E1',
+        magic: '#A020F0'
+      };
+
+      const gameIcons = {
+        one_piece: '🏴‍☠️',
+        pokemon: '⚡',
+        yugioh: '🎴',
+        magic: '✨'
+      };
+
+      return (
+        <div>
+          <div className="tcg-header">
+            <h1>Trading Card Database</h1>
+            <p>Premium Collectible Card Search - One Piece, Pokémon, Yu-Gi-Oh & Magic</p>
+          </div>
+
+          <div className="tcg-search-box">
+            <div className="tcg-search-controls">
+              <div style={{ flex: 1, minWidth: '200px', position: 'relative' }}>
+                <input
+                  type="text"
+                  className="tcg-search-input"
+                  placeholder="Search for a card..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="tcg-suggestions">
+                    {suggestions.map((s, i) => (
+                      <div key={i} className="tcg-suggestion-item" onClick={() => {
+                        setSearchQuery(s);
+                        setShowSuggestions(false);
+                        setTimeout(() => handleSearch(s), 0);
+                      }}>
+                        {s}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <select className="tcg-game-select" value={selectedGame} onChange={(e) => {
+                setSelectedGame(e.target.value);
+                if (searchQuery) handleSearch();
+              }}>
+                <option value="">All Games</option>
+                {games.map(g => <option key={g} value={g}>{gameIcons[g]} {g.replace('_', ' ').toUpperCase()}</option>)}
+              </select>
+
+              <button className="tcg-btn-search" onClick={() => handleSearch()} disabled={!searchQuery || loading}>
+                {loading ? 'Searching...' : 'Search'}
+              </button>
+            </div>
+          </div>
+
+          <div className="tcg-content">
+            <div>
+              {selectedCard ? (
+                <div className="tcg-card-main">
+                  <div className="tcg-card-image">
+                    <img src={selectedCard.image_url} alt={selectedCard.name} />
+                  </div>
+                  <div className="tcg-card-details">
+                    <h2 className="tcg-card-name">{selectedCard.name}</h2>
+                    <div className="tcg-card-badge" style={{ backgroundColor: gameColors[selectedCard.game] }}>
+                      {gameIcons[selectedCard.game]} {selectedCard.game}
+                    </div>
+
+                    {selectedCard.type && (
+                      <div className="tcg-detail-row">
+                        <span className="tcg-detail-label">Type</span>
+                        <span className="tcg-detail-value">{selectedCard.type}</span>
+                      </div>
+                    )}
+
+                    {selectedCard.rarity && (
+                      <div className="tcg-detail-row">
+                        <span className="tcg-detail-label">Rarity</span>
+                        <span className="tcg-detail-value">{selectedCard.rarity}</span>
+                      </div>
+                    )}
+
+                    {selectedCard.hp && (
+                      <div className="tcg-detail-row">
+                        <span className="tcg-detail-label">HP</span>
+                        <span className="tcg-detail-value">{selectedCard.hp}</span>
+                      </div>
+                    )}
+
+                    {selectedCard.price_usd && (
+                      <div className="tcg-detail-row">
+                        <span className="tcg-detail-label">Price</span>
+                        <span className="tcg-detail-value" style={{ fontSize: '16px' }}>${selectedCard.price_usd.toFixed(2)}</span>
+                      </div>
+                    )}
+
+                    {selectedCard.effect && (
+                      <div className="tcg-effect">
+                        <div className="tcg-effect-title">Effect / Description</div>
+                        <div className="tcg-effect-text">{selectedCard.effect.substring(0, 250)}...</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="tcg-card-main tcg-empty">
+                  <p>👀 Search for a card to see it here</p>
+                </div>
+              )}
+            </div>
+
+            {searchResults.length > 0 && (
+              <div className="tcg-results">
+                <div className="tcg-results-title">Results ({searchResults.length})</div>
+                {searchResults.slice(0, 15).map(card => (
+                  <div key={card.card_id} className="tcg-result-item" onClick={() => setSelectedCard(card)}>
+                    <img src={card.image_url} alt="" className="tcg-result-image" />
+                    <div className="tcg-result-info">
+                      <div className="tcg-result-name">{card.name}</div>
+                      <div className="tcg-result-meta">{gameIcons[card.game]} {card.rarity}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<TCGSearch />);
+  </script>
+</body>
+</html>
