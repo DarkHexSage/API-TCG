@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   api:
     build:
@@ -10,12 +9,9 @@ services:
       - "32784:8000"
     environment:
       - PYTHONUNBUFFERED=1
-    volumes:
-      - ./db_standardizer/tcg_unified.db:/app/tcg_unified.db:ro
     networks:
       - tcg-network
     restart: unless-stopped
-
   frontend:
     build:
       context: .
@@ -28,7 +24,6 @@ services:
     networks:
       - tcg-network
     restart: unless-stopped
-
 networks:
   tcg-network:
     driver: bridge
