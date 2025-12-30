@@ -7,7 +7,7 @@ services:
       dockerfile: api.Dockerfile
     container_name: tcg-api
     ports:
-      - "8005:8000"
+      - "32784:8000"
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
@@ -22,7 +22,7 @@ services:
       dockerfile: frontend.Dockerfile
     container_name: tcg-frontend
     ports:
-      - "8080:80"
+      - "32785:80"
     depends_on:
       - api
     networks:
