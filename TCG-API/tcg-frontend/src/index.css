@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -10,8 +12,8 @@ html, body, #root {
 }
 
 body {
-  font-family: 'Inter', 'Roboto', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', sans-serif;
-  font-weight: 400;
+  font-family: 'JetBrains Mono', 'Inter', monospace, sans-serif;
+  font-weight: 500;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   background-image: url('https://www.hdwallpapers.in/download/yu_gi_oh_hd_yu_gi_oh%21_master_duel-HD.jpg');
   background-size: cover;
@@ -43,20 +45,23 @@ body::before {
 }
 
 .tcg-container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 20px;
   width: 100%;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ============ HEADER ============ */
 .tcg-header {
   text-align: center;
   margin-bottom: 40px;
   padding: 50px 20px 40px;
   border-bottom: 2px solid rgba(251, 191, 36, 0.3);
   animation: slideDown 0.6s ease-out;
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes slideDown {
@@ -74,25 +79,27 @@ body::before {
   font-size: 56px;
   color: #fbbf24;
   margin-bottom: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(251, 191, 36, 0.3);
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-shadow: 0 4px 20px rgba(251, 191, 36, 0.4), 0 0 20px rgba(251, 191, 36, 0.2);
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
 }
 
 .tcg-header p {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.85);
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.5px;
   max-width: 600px;
   margin: 0 auto;
 }
 
-/* ============ SEARCH BOX ============ */
+/* ⭐ CRITICAL: Search box z-index layering */
 .tcg-search-box {
   background: rgba(30, 41, 59, 0.25);
   border: 1px solid rgba(251, 191, 36, 0.25);
@@ -103,6 +110,9 @@ body::before {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   animation: fadeIn 0.8s ease-out 0.2s both;
+  position: relative;
+  z-index: 100;
+  overflow: visible;
 }
 
 @keyframes fadeIn {
@@ -121,32 +131,39 @@ body::before {
   gap: 16px;
   flex-wrap: wrap;
   align-items: stretch;
+  position: relative;
+  z-index: 100;
 }
 
 .tcg-search-input-wrapper {
   flex: 1;
   min-width: 250px;
   position: relative;
+  z-index: 100;
+  overflow: visible;
 }
 
 .tcg-search-input {
   width: 100%;
   padding: 16px 20px;
-  border: 1px solid rgba(251, 191, 36, 0.35);
+  border: 2px solid rgba(251, 191, 36, 0.35);
   border-radius: 12px;
   font-size: 15px;
   background: rgba(51, 65, 85, 0.35);
   color: #ffffff;
-  font-family: inherit;
-  font-weight: 400;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.3px;
+  position: relative;
+  z-index: 100;
 }
 
 .tcg-search-input::placeholder {
   color: rgba(255, 255, 255, 0.55);
+  font-weight: 500;
 }
 
 .tcg-search-input:focus {
@@ -154,23 +171,26 @@ body::before {
   border-color: #fbbf24;
   box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.2);
   background: rgba(51, 65, 85, 0.6);
+  position: relative;
+  z-index: 101;
 }
 
 .tcg-game-select {
   padding: 16px 20px;
-  border: 1px solid rgba(251, 191, 36, 0.35);
+  border: 2px solid rgba(251, 191, 36, 0.35);
   border-radius: 12px;
   font-size: 15px;
   cursor: pointer;
   background: rgba(51, 65, 85, 0.35);
   color: #ffffff;
-  font-family: inherit;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
   min-width: 180px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .tcg-game-select:hover {
@@ -187,6 +207,7 @@ body::before {
 .tcg-game-select option {
   background: #1a1a2e;
   color: #ffffff;
+  font-weight: 600;
 }
 
 .tcg-btn-search {
@@ -196,12 +217,16 @@ body::before {
   border: none;
   border-radius: 12px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: 0.6px;
+  letter-spacing: 0.8px;
   box-shadow: 0 4px 15px rgba(251, 191, 36, 0.25);
   white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 100;
 }
 
 .tcg-btn-search:hover:not(:disabled) {
@@ -220,38 +245,41 @@ body::before {
   transform: none;
 }
 
-/* ============ SUGGESTIONS ============ */
+/* ⭐ CRITICAL: Suggestions positioning and z-index */
 .tcg-suggestions {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
   background: rgba(26, 26, 46, 0.98);
-  border: 1px solid rgba(251, 191, 36, 0.35);
+  border: 2px solid rgba(251, 191, 36, 0.5);
   border-top: none;
   border-radius: 0 0 12px 12px;
-  max-height: 280px;
+  max-height: 320px;
   overflow-y: auto;
-  z-index: 100;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8), 0 4px 16px rgba(251, 191, 36, 0.3);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  margin-top: -1px;
+  margin-top: -2px;
+  width: 100%;
+  animation: slideDown 0.3s ease-out;
 }
 
 .tcg-suggestion-item {
   padding: 14px 20px;
   cursor: pointer;
-  border-bottom: 1px solid rgba(251, 191, 36, 0.08);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.15);
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 0.3px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .tcg-suggestion-item:hover {
-  background: rgba(251, 191, 36, 0.18);
+  background: rgba(251, 191, 36, 0.2);
   color: #fbbf24;
   padding-left: 24px;
 }
@@ -265,23 +293,34 @@ body::before {
 }
 
 .tcg-suggestions::-webkit-scrollbar-thumb {
-  background: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.4);
   border-radius: 4px;
 }
 
 .tcg-suggestions::-webkit-scrollbar-thumb:hover {
-  background: rgba(251, 191, 36, 0.5);
+  background: rgba(251, 191, 36, 0.6);
 }
 
-/* ============ CONTENT GRID ============ */
+/* Content area - lower z-index than search */
 .tcg-content {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 380px;
   gap: 30px;
   animation: fadeIn 0.8s ease-out 0.4s both;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  z-index: 2;
 }
 
-/* ============ CARD MAIN ============ */
+.tcg-main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  z-index: 2;
+}
+
 .tcg-card-main {
   background: rgba(30, 41, 59, 0.25);
   border: 1px solid rgba(251, 191, 36, 0.25);
@@ -290,10 +329,14 @@ body::before {
   box-shadow: 0 8px 32px rgba(251, 191, 36, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   display: flex;
   gap: 50px;
-  align-items: flex-start;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   transition: all 0.4s ease;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  position: relative;
+  z-index: 2;
 }
 
 .tcg-card-main:hover {
@@ -304,6 +347,10 @@ body::before {
 .tcg-card-image {
   flex: 0 0 310px;
   animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  align-self: flex-start;
+  position: sticky;
+  top: 20px;
+  z-index: 2;
 }
 
 @keyframes popIn {
@@ -335,6 +382,13 @@ body::before {
 .tcg-card-details {
   flex: 1;
   animation: slideInRight 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 10px;
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes slideInRight {
@@ -349,12 +403,15 @@ body::before {
 }
 
 .tcg-card-name {
-  font-size: 42px;
-  font-weight: 700;
+  font-size: 48px;
+  font-weight: 800;
   color: #ffffff;
   margin-bottom: 18px;
-  letter-spacing: 0.8px;
+  letter-spacing: 1.2px;
   line-height: 1.2;
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
 }
 
 .tcg-card-badge {
@@ -362,12 +419,15 @@ body::before {
   padding: 10px 22px;
   border-radius: 24px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   color: #1a1a2e;
   margin-bottom: 28px;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.8px;
   box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
   text-transform: uppercase;
+  width: fit-content;
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .tcg-detail-row {
@@ -376,84 +436,141 @@ body::before {
   padding: 16px 0;
   border-bottom: 1px solid rgba(251, 191, 36, 0.12);
   font-size: 15px;
-}
-
-.tcg-detail-row:last-child {
-  border-bottom: none;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .tcg-detail-label {
-  font-weight: 600;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.7);
   letter-spacing: 0.3px;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
 }
 
 .tcg-detail-value {
   color: #fbbf24;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
 }
 
+/* ⭐ CRITICAL FIX: Effect box sizes based on text content */
 .tcg-effect {
   margin-top: 32px;
-  padding: 22px;
+  padding: 24px;
   background: rgba(251, 191, 36, 0.1);
   border-left: 4px solid #fbbf24;
   border-radius: 12px;
   border: 1px solid rgba(251, 191, 36, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  flex: 0 1 auto;
+  max-height: 65vh;
 }
 
 .tcg-effect-title {
-  font-weight: 700;
+  font-weight: 800;
   color: #fbbf24;
   font-size: 12px;
   text-transform: uppercase;
-  margin-bottom: 12px;
-  letter-spacing: 0.8px;
+  margin-bottom: 14px;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .tcg-effect-text {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.85);
-  line-height: 1.7;
-  font-weight: 400;
+  line-height: 1.8;
+  font-weight: 500;
   letter-spacing: 0.3px;
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  padding-right: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+  z-index: 2;
+  max-height: calc(65vh - 70px);
+}
+
+.tcg-effect-text::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tcg-effect-text::-webkit-scrollbar-track {
+  background: rgba(251, 191, 36, 0.05);
+  border-radius: 4px;
+}
+
+.tcg-effect-text::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.3);
+  border-radius: 4px;
+}
+
+.tcg-effect-text::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.5);
 }
 
 .tcg-empty {
   text-align: center;
-  padding: 100px 40px;
+  padding: 120px 40px;
   color: rgba(251, 191, 36, 0.6);
+  position: relative;
+  z-index: 2;
 }
 
 .tcg-empty p {
   font-size: 20px;
   margin: 0;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.4px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-/* ============ RESULTS ============ */
 .tcg-results {
   background: rgba(30, 41, 59, 0.25);
   border: 1px solid rgba(251, 191, 36, 0.25);
   border-radius: 20px;
   padding: 28px;
   box-shadow: 0 8px 32px rgba(251, 191, 36, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  max-height: 650px;
-  overflow-y: auto;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   animation: fadeIn 0.8s ease-out 0.6s both;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .tcg-results-title {
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 800;
   color: #fbbf24;
   margin-bottom: 20px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   text-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+}
+
+.tcg-results-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
 }
 
 .tcg-result-item {
@@ -464,7 +581,9 @@ body::before {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(251, 191, 36, 0.12);
-  margin-bottom: 8px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .tcg-result-item:hover {
@@ -473,13 +592,19 @@ body::before {
   transform: translateX(6px);
 }
 
+.tcg-result-item-active {
+  background: rgba(251, 191, 36, 0.25);
+  border-color: rgba(251, 191, 36, 0.6);
+  box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.1);
+}
+
 .tcg-result-image {
   width: 55px;
   height: 75px;
   object-fit: cover;
   border-radius: 8px;
   flex-shrink: 0;
-  border: 1px solid rgba(251, 191, 36, 0.25);
+  border: 2px solid rgba(251, 191, 36, 0.25);
   transition: all 0.3s ease;
 }
 
@@ -493,16 +618,19 @@ body::before {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .tcg-result-name {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: 0.3px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .tcg-result-meta {
@@ -510,9 +638,9 @@ body::before {
   color: rgba(255, 255, 255, 0.6);
   margin-top: 4px;
   letter-spacing: 0.2px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-/* ============ SCROLLBAR ============ */
 .tcg-results::-webkit-scrollbar {
   width: 10px;
 }
@@ -532,8 +660,25 @@ body::before {
   background: rgba(251, 191, 36, 0.55);
 }
 
-/* ============ RESPONSIVE ============ */
-@media (max-width: 1024px) {
+.tcg-card-main::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tcg-card-main::-webkit-scrollbar-track {
+  background: rgba(251, 191, 36, 0.05);
+  border-radius: 10px;
+}
+
+.tcg-card-main::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.35);
+  border-radius: 10px;
+}
+
+.tcg-card-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.55);
+}
+
+@media (max-width: 1200px) {
   .tcg-content {
     grid-template-columns: 1fr;
   }
@@ -548,6 +693,15 @@ body::before {
     flex: 0 0 auto;
     max-width: 250px;
     margin: 0 auto;
+    position: static;
+  }
+
+  .tcg-effect {
+    max-height: 50vh;
+  }
+
+  .tcg-effect-text {
+    max-height: calc(50vh - 70px);
   }
 }
 
@@ -563,6 +717,7 @@ body::before {
 
   .tcg-header h1 {
     font-size: 40px;
+    letter-spacing: 2px;
   }
 
   .tcg-header p {
@@ -597,11 +752,15 @@ body::before {
 
   .tcg-card-name {
     font-size: 28px;
+    letter-spacing: 0.8px;
   }
 
-  .tcg-results {
-    padding: 20px;
-    max-height: 500px;
+  .tcg-effect {
+    max-height: 40vh;
+  }
+
+  .tcg-effect-text {
+    max-height: calc(40vh - 70px);
   }
 }
 
@@ -616,7 +775,11 @@ body::before {
     gap: 6px;
   }
 
-  .tcg-results {
-    max-height: 400px;
+  .tcg-effect {
+    max-height: 35vh;
+  }
+
+  .tcg-effect-text {
+    max-height: calc(35vh - 70px);
   }
 }

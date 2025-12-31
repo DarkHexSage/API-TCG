@@ -9,39 +9,30 @@ function TCGSearch() {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  // ⭐ SMART API URL DETECTION
   const getApiUrl = () => {
-    const protocol = window.location.protocol;
     const hostname = window.location.hostname;
     const pathname = window.location.pathname;
 
-    console.log('🔍 API Detection:', { protocol, hostname, pathname });
-
     if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
       if (pathname.startsWith('/tcg')) {
-        console.log('✅ Using /tcg/api');
         return '/tcg/api';
       }
     }
-
-    console.log('✅ Using /api');
     return '/api';
   };
 
   const API_URL = getApiUrl();
 
   useEffect(() => {
-    console.log('📡 Fetching games from:', API_URL);
     fetchGames();
   }, []);
 
   const fetchGames = async () => {
     try {
-      const url = `${API_URL}/games`;
-      const response = await fetch(url);
+      const response = await fetch(`${API_URL}/games`);
       const data = await response.json();
-      console.log('✅ Games loaded:', data);
       setGames(data.games || []);
     } catch (e) {
       console.error('❌ Error fetching games:', e);
@@ -62,8 +53,7 @@ function TCGSearch() {
       params.append('limit', '10');
       if (selectedGame) params.append('game', selectedGame);
 
-      const url = `${API_URL}/autocomplete?${params}`;
-      const response = await fetch(url);
+      const response = await fetch(`${API_URL}/autocomplete?${params}`);
       const data = await response.json();
       setSuggestions(data.suggestions || []);
       setShowSuggestions(true);
@@ -75,6 +65,9 @@ function TCGSearch() {
   const handleSearch = async (query = searchQuery) => {
     if (!query.trim()) return;
     setLoading(true);
+    setHasSearched(true);
+    setSelectedCard(null);
+    setShowSuggestions(false);
 
     try {
       const params = new URLSearchParams();
@@ -82,15 +75,15 @@ function TCGSearch() {
       params.append('limit', '50');
       if (selectedGame) params.append('game', selectedGame);
 
-      const url = `${API_URL}/search?${params}`;
-      const response = await fetch(url);
+      const response = await fetch(`${API_URL}/search?${params}`);
       const data = await response.json();
       
-      setSearchResults(data.cards || []);
+      const results = data.cards || [];
+      setSearchResults(results);
       setShowSuggestions(false);
       
-      if (data.cards && data.cards.length > 0) {
-        setSelectedCard(data.cards[0]);
+      if (results.length > 0) {
+        setSelectedCard(results[0]);
       }
     } catch (e) {
       console.error('❌ Search error:', e);
@@ -116,13 +109,11 @@ function TCGSearch() {
   return (
     <div className="tcg-wrapper">
       <div className="tcg-container">
-        {/* HEADER */}
         <div className="tcg-header">
           <h1>Trading Card Database</h1>
           <p>Premium Collectible Card Search - One Piece, Pokémon, Yu-Gi-Oh & Magic</p>
         </div>
 
-        {/* SEARCH BOX */}
         <div className="tcg-search-box">
           <div className="tcg-search-controls">
             <div className="tcg-search-input-wrapper">
@@ -174,15 +165,22 @@ function TCGSearch() {
               onClick={() => handleSearch()}
               disabled={!searchQuery.trim() || loading}
             >
-              {loading ? '🔍 Searching...' : 'Search'}
+              {loading ? '🔍 SEARCHING...' : 'SEARCH'}
             </button>
           </div>
         </div>
 
-        {/* MAIN CONTENT */}
         <div className="tcg-content">
-          <div>
-            {selectedCard ? (
+          <div className="tcg-main-content">
+            {!hasSearched ? (
+              <div className="tcg-card-main tcg-empty">
+                <p>👀 Search for a card to see it here</p>
+              </div>
+            ) : searchResults.length === 0 ? (
+              <div className="tcg-card-main tcg-empty">
+                <p>📭 No cards found. Try a different search!</p>
+              </div>
+            ) : selectedCard ? (
               <div className="tcg-card-main">
                 <div className="tcg-card-image">
                   <img
@@ -236,49 +234,44 @@ function TCGSearch() {
 
                   {selectedCard.effect && (
                     <div className="tcg-effect">
-                      <div className="tcg-effect-title">✨ Effect / Description</div>
-                      <div className="tcg-effect-text">
-                        {selectedCard.effect.substring(0, 300)}...
-                      </div>
+                      <div className="tcg-effect-title">✨ EFFECT / DESCRIPTION</div>
+                      <div className="tcg-effect-text">{selectedCard.effect}</div>
                     </div>
                   )}
                 </div>
               </div>
-            ) : (
-              <div className="tcg-card-main tcg-empty">
-                <p>👀 Search for a card to see it here</p>
-              </div>
-            )}
+            ) : null}
           </div>
 
-          {/* RESULTS SIDEBAR */}
           {searchResults.length > 0 && (
             <div className="tcg-results">
-              <div className="tcg-results-title">📊 Results ({searchResults.length})</div>
-              {searchResults.slice(0, 20).map((card) => (
-                <div
-                  key={card.card_id}
-                  className="tcg-result-item"
-                  onClick={() => setSelectedCard(card)}
-                >
-                  <img
-                    src={card.image_url}
-                    alt=""
-                    className="tcg-result-image"
-                    onError={(e) =>
-                      (e.target.src =
-                        'https://via.placeholder.com/55x75?text=' +
-                        encodeURIComponent(card.name))
-                    }
-                  />
-                  <div className="tcg-result-info">
-                    <div className="tcg-result-name">{card.name}</div>
-                    <div className="tcg-result-meta">
-                      {gameIcons[card.game] || '🎮'} {card.rarity}
+              <div className="tcg-results-title">📊 RESULTS ({searchResults.length})</div>
+              <div className="tcg-results-list">
+                {searchResults.slice(0, 30).map((card) => (
+                  <div
+                    key={card.card_id}
+                    className={`tcg-result-item ${selectedCard?.card_id === card.card_id ? 'tcg-result-item-active' : ''}`}
+                    onClick={() => setSelectedCard(card)}
+                  >
+                    <img
+                      src={card.image_url}
+                      alt=""
+                      className="tcg-result-image"
+                      onError={(e) =>
+                        (e.target.src =
+                          'https://via.placeholder.com/55x75?text=' +
+                          encodeURIComponent(card.name))
+                      }
+                    />
+                    <div className="tcg-result-info">
+                      <div className="tcg-result-name">{card.name}</div>
+                      <div className="tcg-result-meta">
+                        {gameIcons[card.game] || '🎮'} {card.rarity}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </div>
