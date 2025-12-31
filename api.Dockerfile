@@ -12,8 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY TCG-API/tcg-backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+
 # Copiar código
 COPY TCG-API/tcg-backend/main.py .
+COPY db_standardizer/tcg_unified.db .
 
 EXPOSE 8000
 
