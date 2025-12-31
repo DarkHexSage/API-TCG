@@ -13,18 +13,20 @@ services:
       - tcg-network
     restart: unless-stopped
 
-  frontend:
-    build:
-      context: .
-      dockerfile: frontend.Dockerfile
-    container_name: tcg-frontend
-    ports:
-      - "32785:80"
-    depends_on:
-      - api
-    networks:
-      - tcg-network
-    restart: unless-stopped
+frontend:
+  build:
+    context: .
+    dockerfile: frontend.Dockerfile
+    args:
+      - PUBLIC_URL=/tcg          # ⭐ ADD THIS
+  container_name: tcg-frontend
+  ports:
+    - "32785:80"
+  depends_on:
+    - api
+  networks:
+    - tcg-network
+  restart: unless-stopped
 
 networks:
   tcg-network:
