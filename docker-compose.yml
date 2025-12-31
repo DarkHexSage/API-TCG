@@ -10,7 +10,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-      - ./db_standardizer:/app/db_standardizer  # ⭐ Mount database
+      - ../db_standardizer:/app/db_standardizer  # ⭐ Go up one level!
     networks:
       - tcg-network
     restart: unless-stopped
