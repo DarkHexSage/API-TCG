@@ -10,21 +10,41 @@ function TCGSearch() {
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // ⭐ Use environment variable with fallback
-  const API_URL = process.env.REACT_APP_API_URL || '/api';
+  // ⭐ SMART API URL DETECTION
+  const getApiUrl = () => {
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
+
+    console.log('🔍 API Detection:', { protocol, hostname, pathname });
+
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      if (pathname.startsWith('/tcg')) {
+        console.log('✅ Using /tcg/api');
+        return '/tcg/api';
+      }
+    }
+
+    console.log('✅ Using /api');
+    return '/api';
+  };
+
+  const API_URL = getApiUrl();
 
   useEffect(() => {
-    console.log('API URL:', API_URL);
+    console.log('📡 Fetching games from:', API_URL);
     fetchGames();
   }, []);
 
   const fetchGames = async () => {
     try {
-      const res = await fetch(`${API_URL}/games`);
-      const data = await res.json();
-      setGames(data.games);
+      const url = `${API_URL}/games`;
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log('✅ Games loaded:', data);
+      setGames(data.games || []);
     } catch (e) {
-      console.error('Error fetching games:', e);
+      console.error('❌ Error fetching games:', e);
     }
   };
 
@@ -37,37 +57,43 @@ function TCGSearch() {
     }
 
     try {
-      const url = new URL(`${API_URL}/autocomplete`, window.location.origin);
-      url.searchParams.append('q', value);
-      url.searchParams.append('limit', '8');
-      if (selectedGame) url.searchParams.append('game', selectedGame);
+      const params = new URLSearchParams();
+      params.append('q', value);
+      params.append('limit', '10');
+      if (selectedGame) params.append('game', selectedGame);
 
-      const res = await fetch(url);
-      const data = await res.json();
-      setSuggestions(data.suggestions);
+      const url = `${API_URL}/autocomplete?${params}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setSuggestions(data.suggestions || []);
       setShowSuggestions(true);
     } catch (e) {
-      console.error('Error fetching suggestions:', e);
+      console.error('❌ Autocomplete error:', e);
     }
   };
 
   const handleSearch = async (query = searchQuery) => {
-    if (!query) return;
+    if (!query.trim()) return;
     setLoading(true);
 
     try {
-      const url = new URL(`${API_URL}/search`, window.location.origin);
-      url.searchParams.append('q', query);
-      url.searchParams.append('limit', '50');
-      if (selectedGame) url.searchParams.append('game', selectedGame);
+      const params = new URLSearchParams();
+      params.append('q', query);
+      params.append('limit', '50');
+      if (selectedGame) params.append('game', selectedGame);
 
-      const res = await fetch(url);
-      const data = await res.json();
-      setSearchResults(data.cards);
+      const url = `${API_URL}/search?${params}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      setSearchResults(data.cards || []);
       setShowSuggestions(false);
-      if (data.cards.length > 0) setSelectedCard(data.cards[0]);
+      
+      if (data.cards && data.cards.length > 0) {
+        setSelectedCard(data.cards[0]);
+      }
     } catch (e) {
-      console.error('Error searching:', e);
+      console.error('❌ Search error:', e);
     } finally {
       setLoading(false);
     }
@@ -88,130 +114,174 @@ function TCGSearch() {
   };
 
   return (
-    <div className="tcg-container">
-      <div className="tcg-header">
-        <h1>Trading Card Database</h1>
-        <p>Premium Collectible Card Search - One Piece, Pokémon, Yu-Gi-Oh & Magic</p>
-      </div>
+    <div className="tcg-wrapper">
+      <div className="tcg-container">
+        {/* HEADER */}
+        <div className="tcg-header">
+          <h1>Trading Card Database</h1>
+          <p>Premium Collectible Card Search - One Piece, Pokémon, Yu-Gi-Oh & Magic</p>
+        </div>
 
-      <div className="tcg-search-box">
-        <div className="tcg-search-controls">
-          <div style={{ flex: 1, minWidth: '200px', position: 'relative' }}>
-            <input
-              type="text"
-              className="tcg-search-input"
-              placeholder="Search for a card..."
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-            {showSuggestions && suggestions.length > 0 && (
-              <div className="tcg-suggestions">
-                {suggestions.map((s, i) => (
-                  <div key={i} className="tcg-suggestion-item" onClick={() => {
-                    setSearchQuery(s);
-                    setShowSuggestions(false);
-                    setTimeout(() => handleSearch(s), 0);
-                  }}>
-                    {s}
+        {/* SEARCH BOX */}
+        <div className="tcg-search-box">
+          <div className="tcg-search-controls">
+            <div className="tcg-search-input-wrapper">
+              <input
+                type="text"
+                className="tcg-search-input"
+                placeholder="Search for a card..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="tcg-suggestions">
+                  {suggestions.map((s, i) => (
+                    <div
+                      key={i}
+                      className="tcg-suggestion-item"
+                      onClick={() => {
+                        setSearchQuery(s);
+                        setShowSuggestions(false);
+                        setTimeout(() => handleSearch(s), 0);
+                      }}
+                    >
+                      {s}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <select
+              className="tcg-game-select"
+              value={selectedGame}
+              onChange={(e) => {
+                setSelectedGame(e.target.value);
+                if (searchQuery) handleSearch();
+              }}
+            >
+              <option value="">All Games ({games.length})</option>
+              {games.map((g) => (
+                <option key={g} value={g}>
+                  {gameIcons[g] || '🎮'} {g.replace('_', ' ').toUpperCase()}
+                </option>
+              ))}
+            </select>
+
+            <button
+              className="tcg-btn-search"
+              onClick={() => handleSearch()}
+              disabled={!searchQuery.trim() || loading}
+            >
+              {loading ? '🔍 Searching...' : 'Search'}
+            </button>
+          </div>
+        </div>
+
+        {/* MAIN CONTENT */}
+        <div className="tcg-content">
+          <div>
+            {selectedCard ? (
+              <div className="tcg-card-main">
+                <div className="tcg-card-image">
+                  <img
+                    src={selectedCard.image_url}
+                    alt={selectedCard.name}
+                    onError={(e) =>
+                      (e.target.src =
+                        'https://via.placeholder.com/300x400?text=' +
+                        encodeURIComponent(selectedCard.name))
+                    }
+                  />
+                </div>
+                <div className="tcg-card-details">
+                  <h2 className="tcg-card-name">{selectedCard.name}</h2>
+                  <div
+                    className="tcg-card-badge"
+                    style={{ backgroundColor: gameColors[selectedCard.game] || '#999' }}
+                  >
+                    {gameIcons[selectedCard.game] || '🎮'} {selectedCard.game}
                   </div>
-                ))}
+
+                  {selectedCard.type && (
+                    <div className="tcg-detail-row">
+                      <span className="tcg-detail-label">Type</span>
+                      <span className="tcg-detail-value">{selectedCard.type}</span>
+                    </div>
+                  )}
+
+                  {selectedCard.rarity && (
+                    <div className="tcg-detail-row">
+                      <span className="tcg-detail-label">Rarity</span>
+                      <span className="tcg-detail-value">{selectedCard.rarity}</span>
+                    </div>
+                  )}
+
+                  {selectedCard.hp && (
+                    <div className="tcg-detail-row">
+                      <span className="tcg-detail-label">HP</span>
+                      <span className="tcg-detail-value">{selectedCard.hp}</span>
+                    </div>
+                  )}
+
+                  {selectedCard.price_usd && (
+                    <div className="tcg-detail-row">
+                      <span className="tcg-detail-label">Price</span>
+                      <span className="tcg-detail-value">
+                        ${selectedCard.price_usd.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+
+                  {selectedCard.effect && (
+                    <div className="tcg-effect">
+                      <div className="tcg-effect-title">✨ Effect / Description</div>
+                      <div className="tcg-effect-text">
+                        {selectedCard.effect.substring(0, 300)}...
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="tcg-card-main tcg-empty">
+                <p>👀 Search for a card to see it here</p>
               </div>
             )}
           </div>
 
-          <select className="tcg-game-select" value={selectedGame} onChange={(e) => {
-            setSelectedGame(e.target.value);
-            if (searchQuery) handleSearch();
-          }}>
-            <option value="">All Games</option>
-            {games.map(g => (
-              <option key={g} value={g}>
-                {gameIcons[g] || '🎮'} {g.replace('_', ' ').toUpperCase()}
-              </option>
-            ))}
-          </select>
-
-          <button className="tcg-btn-search" onClick={() => handleSearch()} disabled={!searchQuery || loading}>
-            {loading ? 'Searching...' : 'Search'}
-          </button>
-        </div>
-      </div>
-
-      <div className="tcg-content">
-        <div>
-          {selectedCard ? (
-            <div className="tcg-card-main">
-              <div className="tcg-card-image">
-                <img src={selectedCard.image_url} alt={selectedCard.name} />
-              </div>
-              <div className="tcg-card-details">
-                <h2 className="tcg-card-name">{selectedCard.name}</h2>
-                <div className="tcg-card-badge" style={{ backgroundColor: gameColors[selectedCard.game] }}>
-                  {gameIcons[selectedCard.game] || '🎮'} {selectedCard.game}
+          {/* RESULTS SIDEBAR */}
+          {searchResults.length > 0 && (
+            <div className="tcg-results">
+              <div className="tcg-results-title">📊 Results ({searchResults.length})</div>
+              {searchResults.slice(0, 20).map((card) => (
+                <div
+                  key={card.card_id}
+                  className="tcg-result-item"
+                  onClick={() => setSelectedCard(card)}
+                >
+                  <img
+                    src={card.image_url}
+                    alt=""
+                    className="tcg-result-image"
+                    onError={(e) =>
+                      (e.target.src =
+                        'https://via.placeholder.com/55x75?text=' +
+                        encodeURIComponent(card.name))
+                    }
+                  />
+                  <div className="tcg-result-info">
+                    <div className="tcg-result-name">{card.name}</div>
+                    <div className="tcg-result-meta">
+                      {gameIcons[card.game] || '🎮'} {card.rarity}
+                    </div>
+                  </div>
                 </div>
-
-                {selectedCard.type && (
-                  <div className="tcg-detail-row">
-                    <span className="tcg-detail-label">Type</span>
-                    <span className="tcg-detail-value">{selectedCard.type}</span>
-                  </div>
-                )}
-
-                {selectedCard.rarity && (
-                  <div className="tcg-detail-row">
-                    <span className="tcg-detail-label">Rarity</span>
-                    <span className="tcg-detail-value">{selectedCard.rarity}</span>
-                  </div>
-                )}
-
-                {selectedCard.hp && (
-                  <div className="tcg-detail-row">
-                    <span className="tcg-detail-label">HP</span>
-                    <span className="tcg-detail-value">{selectedCard.hp}</span>
-                  </div>
-                )}
-
-                {selectedCard.price_usd && (
-                  <div className="tcg-detail-row">
-                    <span className="tcg-detail-label">Price</span>
-                    <span className="tcg-detail-value" style={{ fontSize: '16px' }}>
-                      ${selectedCard.price_usd.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                {selectedCard.effect && (
-                  <div className="tcg-effect">
-                    <div className="tcg-effect-title">Effect / Description</div>
-                    <div className="tcg-effect-text">{selectedCard.effect.substring(0, 250)}...</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="tcg-card-main tcg-empty">
-              <p>👀 Search for a card to see it here</p>
+              ))}
             </div>
           )}
         </div>
-
-        {searchResults.length > 0 && (
-          <div className="tcg-results">
-            <div className="tcg-results-title">Results ({searchResults.length})</div>
-            {searchResults.slice(0, 15).map(card => (
-              <div key={card.card_id} className="tcg-result-item" onClick={() => setSelectedCard(card)}>
-                <img src={card.image_url} alt="" className="tcg-result-image" />
-                <div className="tcg-result-info">
-                  <div className="tcg-result-name">{card.name}</div>
-                  <div className="tcg-result-meta">
-                    {gameIcons[card.game] || '🎮'} {card.rarity}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

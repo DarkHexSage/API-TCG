@@ -3,24 +3,21 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 COPY TCG-API/tcg-frontend/package*.json ./
-RUN npm ci
+RUN npm install --no-optional
 
-COPY TCG-API/tcg-frontend/src ./src
 COPY TCG-API/tcg-frontend/public ./public
+COPY TCG-API/tcg-frontend/src ./src
 
-# Build with PUBLIC_URL
-ARG PUBLIC_URL=/tcg
-RUN npm run build -- --public-url=$PUBLIC_URL
+# DO NOT set PUBLIC_URL - let Caddy handle path stripping
+# Files will be served from /static/... not /tcg/static/...
 
-# Nginx stage
+RUN npm run build
+
+# Nginx
 FROM nginx:alpine
 
-# Copy built app
 COPY --from=builder /app/build /usr/share/nginx/html/
-
-# Copy nginx config
 COPY TCG-API/tcg-frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
