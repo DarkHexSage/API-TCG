@@ -28,7 +28,7 @@ app.add_middleware(
 )
 
 # Ruta de la base de datos
-DB_PATH = Path("db_standardizer/tcg_unified.db")
+DB_PATH = Path("tcg_unified.db")
 
 # ==================== MODELS ====================
 
