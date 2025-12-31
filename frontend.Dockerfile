@@ -15,10 +15,11 @@ RUN npm run build -- --public-url=$PUBLIC_URL
 # Nginx stage
 FROM nginx:alpine
 
+# Copy built app
 COPY --from=builder /app/build /usr/share/nginx/html/
 
 # Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY TCG-API/tcg-frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
