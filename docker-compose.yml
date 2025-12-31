@@ -9,8 +9,6 @@ services:
       - "32784:8000"
     environment:
       - PYTHONUNBUFFERED=1
-    volumes:
-      - ../db_standardizer:/app/db_standardizer  # ⭐ Go up one level!
     networks:
       - tcg-network
     restart: unless-stopped
