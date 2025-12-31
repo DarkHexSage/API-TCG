@@ -8,12 +8,11 @@ RUN npm install --no-optional
 COPY TCG-API/tcg-frontend/public ./public
 COPY TCG-API/tcg-frontend/src ./src
 
-# DO NOT set PUBLIC_URL - let Caddy handle path stripping
-# Files will be served from /static/... not /tcg/static/...
+# ⭐ ADD THIS LINE
+ENV PUBLIC_URL=/tcg
 
 RUN npm run build
 
-# Nginx
 FROM nginx:alpine
 
 COPY --from=builder /app/build /usr/share/nginx/html/
