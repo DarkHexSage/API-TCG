@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Instalar dependencias del sistema.
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sqlite3 \
     curl \
@@ -14,7 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar código
 COPY TCG-API/tcg-backend/main.py .
-COPY db_standardizer/tcg_unified.db .
 
 EXPOSE 8000
 
