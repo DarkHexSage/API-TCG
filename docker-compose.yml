@@ -13,15 +13,17 @@ services:
       - tcg-network
     restart: unless-stopped
 
-  frontend:  # ← INDENTED under services!
+  frontend:
     build:
       context: .
       dockerfile: frontend.Dockerfile
       args:
-        - PUBLIC_URL=/tcg
+        - PUBLIC_URL=/tcg  # ⭐ Build-time arg
     container_name: tcg-frontend
     ports:
       - "32785:80"
+    environment:
+      - REACT_APP_API_URL=/tcg/api  # ⭐ Runtime env var
     depends_on:
       - api
     networks:

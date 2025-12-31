@@ -1,0 +1,395 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Roboto', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', sans-serif;
+  font-weight: 400;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background-image: url('https://www.hdwallpapers.in/download/yu_gi_oh_hd_yu_gi_oh%21_master_duel-HD.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.7), rgba(22, 33, 62, 0.75));
+  z-index: 1;
+}
+
+#root {
+  position: relative;
+  z-index: 2;
+}
+
+.tcg-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.tcg-header {
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 50px 20px;
+  border-bottom: 2px solid rgba(251, 191, 36, 0.3);
+}
+
+.tcg-header h1 {
+  font-size: 48px;
+  color: #fbbf24;
+  margin-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.tcg-header p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.tcg-search-box {
+  background: rgba(30, 41, 59, 0.25);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(251, 191, 36, 0.1);
+  margin-bottom: 35px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.tcg-search-controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.tcg-search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 14px 18px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+  font-size: 14px;
+  background: rgba(51, 65, 85, 0.4);
+  color: #ffffff;
+  font-family: inherit;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.tcg-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tcg-search-input:focus {
+  outline: none;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
+}
+
+.tcg-game-select {
+  padding: 14px 18px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  background: rgba(51, 65, 85, 0.4);
+  color: #ffffff;
+  font-family: inherit;
+  min-width: 160px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.tcg-game-select:focus {
+  outline: none;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
+}
+
+.tcg-game-select option {
+  background: #1a1a2e;
+  color: #ffffff;
+}
+
+.tcg-btn-search {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1a1a2e;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tcg-btn-search:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.3);
+}
+
+.tcg-btn-search:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tcg-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.tcg-suggestion-item {
+  padding: 12px 18px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.1);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.tcg-suggestion-item:hover {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.tcg-content {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 25px;
+}
+
+.tcg-card-main {
+  background: rgba(30, 41, 59, 0.25);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 16px;
+  padding: 45px;
+  box-shadow: 0 8px 32px rgba(251, 191, 36, 0.1);
+  display: flex;
+  gap: 45px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.tcg-card-image {
+  flex: 0 0 280px;
+}
+
+.tcg-card-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.tcg-card-details {
+  flex: 1;
+}
+
+.tcg-card-name {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.tcg-card-badge {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 24px;
+}
+
+.tcg-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.1);
+  font-size: 14px;
+}
+
+.tcg-detail-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tcg-detail-value {
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.tcg-effect {
+  margin-top: 28px;
+  padding: 20px;
+  background: rgba(251, 191, 36, 0.1);
+  border-left: 3px solid #fbbf24;
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.tcg-effect-title {
+  font-weight: 700;
+  color: #fbbf24;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.tcg-effect-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+}
+
+.tcg-results {
+  background: rgba(30, 41, 59, 0.25);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(251, 191, 36, 0.1);
+  max-height: 600px;
+  overflow-y: auto;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.tcg-results-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-bottom: 18px;
+}
+
+.tcg-result-item {
+  display: flex;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(251, 191, 36, 0.1);
+}
+
+.tcg-result-item:hover {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.3);
+  transform: translateX(4px);
+}
+
+.tcg-result-image {
+  width: 50px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.tcg-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tcg-result-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tcg-result-meta {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 3px;
+}
+
+.tcg-empty {
+  text-align: center;
+  padding: 80px 40px;
+  color: rgba(251, 191, 36, 0.6);
+}
+
+.tcg-empty p {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.tcg-results::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tcg-results::-webkit-scrollbar-track {
+  background: rgba(251, 191, 36, 0.05);
+  border-radius: 10px;
+}
+
+.tcg-results::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+}
+
+.tcg-results::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.5);
+}
+
+@media (max-width: 768px) {
+  .tcg-content {
+    grid-template-columns: 1fr;
+  }
+
+  .tcg-card-main {
+    flex-direction: column;
+    padding: 25px;
+  }
+
+  .tcg-card-image {
+    flex: 0 0 auto;
+    max-width: 200px;
+  }
+
+  .tcg-header h1 {
+    font-size: 32px;
+  }
+
+  .tcg-search-controls {
+    flex-direction: column;
+  }
+
+  .tcg-search-input, .tcg-game-select {
+    width: 100%;
+  }
+}
