@@ -18,7 +18,7 @@
 
 ---
 
-## 📑 Table of Contents
+## 📑 Table of Contents.
 
 ### 🚀 Getting Started
 - [✨ Features](#-features)
