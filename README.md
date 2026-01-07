@@ -524,6 +524,9 @@ sqlite3 tcg_unified.db "CREATE INDEX idx_name ON cards(name);"
 
 **Try the live application here:** https://adragportfolio.info.gf/tcg
 
+[tcg-card.webm](https://github.com/user-attachments/assets/ce27aba8-0792-4c87-b7f3-2990efcf5bb4)
+
+
 Experience the full functionality of the Trading Card Game API with real data and interactive search.
 
 <sup>[⬆ Back to Top](#-table-of-contents)</sup>
