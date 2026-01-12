@@ -16,7 +16,7 @@ echo -e "${BLUE}╔════════════════════�
 echo -e "${BLUE}║   TCG API + Frontend Docker Manager   ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════╝${NC}\n"
 
-# Verificar que estamos en el directorio correcto
+# Verificar que estamos en el directorio correcto.
 if [ ! -f "$COMPOSE_FILE" ]; then
     echo -e "${RED}❌ Error: docker-compose.yml no encontrado${NC}"
     echo "Ejecuta este script desde la carpeta que contiene docker-compose.yml"
